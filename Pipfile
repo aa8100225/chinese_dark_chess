@@ -9,6 +9,7 @@ pylint = "*"
 ruff = "*"
 black = "*"
 pygame = "*"
+pytest = "*"
 
 [dev-packages]
 
