@@ -1,0 +1,15 @@
+{
+   "pylint.args": [
+    "--reports=y",
+    "--disable=C0114", /* missing module docstring */
+    "--disable=C0111"  /* missing function or method docstring */
+   ],
+   "editor.formatOnSave": true,
+   "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.wordBasedSuggestions": "off",
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+   }
+
+}
