@@ -2,7 +2,8 @@
    "pylint.args": [
     "--reports=y",
     "--disable=C0114", /* missing module docstring */
-    "--disable=C0111"  /* missing function or method docstring */
+    "--disable=C0111",  /* missing function or method docstring */
+    "--disable=C0401"
    ],
    "editor.formatOnSave": true,
    "[python]": {

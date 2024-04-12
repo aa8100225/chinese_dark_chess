@@ -1,4 +1,4 @@
-.PHONY: install run clean
+.PHONY: install run clean convert_svgs
 
 VENV = pipenv run
 
@@ -11,3 +11,6 @@ run:
 clean:
 	pipenv --rm
 	rm -rf __pycache__
+
+convert_svgs:
+	pipenv run python scripts/convert_svgs.py ./assets --overwrite
