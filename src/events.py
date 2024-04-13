@@ -1,5 +1,5 @@
 # pylint: disable=no-member
-import pygame
+import pygame  # type: ignore
 
 
 def handle_events() -> bool:
