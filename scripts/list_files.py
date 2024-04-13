@@ -1,7 +1,15 @@
 import os
 
 
-ignore_dirs = {".git", ".mypy_cache", "__pycache__", ".DS_Store", ".vscode"}
+ignore_dirs = {
+    ".git",
+    ".mypy_cache",
+    "__pycache__",
+    ".DS_Store",
+    ".vscode",
+    ".pytest_cache",
+    "assets",
+}
 
 
 def list_directories(startpath: str) -> None:
