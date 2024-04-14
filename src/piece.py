@@ -8,15 +8,39 @@ class PieceType(Enum):
     GENERAL = auto()
     ADVISOR = auto()
     ELEPHANT = auto()
-    HORSE = auto()
     CHARIOT = auto()
+    HORSE = auto()
     CANNON = auto()
     SOLDIER = auto()
+
+    def can_defeat(self, enemy: "PieceType") -> bool:
+        result = False
+        match self:
+            case PieceType.GENERAL:
+                result = (
+                    PieceType.GENERAL.value <= enemy.value < PieceType.SOLDIER.value
+                )
+            case PieceType.ADVISOR:
+                result = enemy.value >= PieceType.ADVISOR.value
+            case PieceType.ELEPHANT:
+                result = enemy.value >= PieceType.GENERAL.value
+            case PieceType.CHARIOT:
+                result = enemy.value >= PieceType.CHARIOT.value
+            case PieceType.HORSE:
+                result = enemy.value >= PieceType.HORSE.value
+            case PieceType.SOLDIER:
+                result = enemy in {PieceType.SOLDIER, PieceType.GENERAL}
+            case PieceType.CANNON:
+                result = True
+        return result
 
 
 class PieceColor(Enum):
     RED = auto()
     BLACK = auto()
+
+    def opposite_color(self) -> "PieceColor":
+        return PieceColor.BLACK if self == PieceColor.RED else PieceColor.RED
 
 
 def pieces_config_hepler(piece_color: PieceColor) -> Dict[PieceType, Dict[str, Any]]:

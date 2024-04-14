@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 # pylint: disable=no-member
 
 import pygame  # type: ignore

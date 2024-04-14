@@ -2,6 +2,7 @@ from enum import Enum, auto
 from typing import Optional, Tuple
 from src.game_state import GameState
 from src.piece import Piece, PieceColor
+from src.piece_action import PieceAction, PieceActionType
 from src.player import PlayerColor
 
 
@@ -26,18 +27,45 @@ class ActionHandler:
         )
         match action_type:
             case ActionType.MOVEMENT:
-                pass
+                self.action_move(position)
             case ActionType.SELECTION:
-                pass
+                self.action_selection(position)
             case ActionType.EATING:
-                pass
+                self.action_eat(position)
             case ActionType.REVEAL:
                 if piece is None:
                     return
-                self.action_reveal(piece)
+                self.action_reveal(position, piece)
 
-    def action_reveal(self, piece: Piece) -> None:
-        piece.reveal()
+    def action_eat(self, next_position: Tuple[int, int]) -> None:
+        piece_action = PieceAction(
+            self.game_state.selected_piece, PieceActionType.EAT, next_position
+        )
+        if not self.game_state.is_valid_action(piece_action):
+            return
+        self.game_state.implement_action(piece_action)
+        self.game_state.update_actions_set()
+        self.game_state.player_toggler()
+        self.game_state.de_selected()
+        self.game_state.reset_idle_steps()
+
+    def action_move(self, next_position: Tuple[int, int]) -> None:
+        piece_action = PieceAction(
+            self.game_state.selected_piece, PieceActionType.MOVE, next_position
+        )
+        if not self.game_state.is_valid_action(piece_action):
+            return
+        self.game_state.implement_action(piece_action)
+        self.game_state.update_actions_set()
+        self.game_state.player_toggler()
+        self.game_state.de_selected()
+        self.game_state.idle_steps_increment()
+
+    def action_reveal(self, position: Tuple[int, int], piece: Piece) -> None:
+        piece_action = PieceAction(position, PieceActionType.REVEAL, position)
+        if not self.game_state.is_valid_action(piece_action):
+            return
+        self.game_state.implement_action(piece_action)
         player_color = (
             PlayerColor.RED
             if piece.piece_color == PieceColor.RED
@@ -46,3 +74,8 @@ class ActionHandler:
         self.game_state.color_assign(player_color)
         self.game_state.player_toggler()
         self.game_state.de_selected()
+        self.game_state.reset_idle_steps()
+        self.game_state.update_actions_set()
+
+    def action_selection(self, position: Tuple[int, int]) -> None:
+        self.game_state.piece_selected(position)

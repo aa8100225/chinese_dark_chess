@@ -1,5 +1,5 @@
 import random
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from src.piece import Piece, PieceColor, pieces_config_hepler
 
 
@@ -39,3 +39,6 @@ class Board:
 
     def get_piece_by_coordinate(self, row: int, col: int) -> Piece | None:
         return self.board_of_pieces[self.to_index(row, col)]
+
+    def get_board_of_pieces(self) -> List[Optional[Piece]]:
+        return self.board_of_pieces

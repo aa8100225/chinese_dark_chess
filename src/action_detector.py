@@ -9,12 +9,14 @@ class ActionDetector:
 
     def detect_action(self, position: Tuple[int, int]) -> Optional[ActionType]:
         piece = self.game_state.get_piece_by_coordinate(position[0], position[1])
-        if self.game_state.is_piece_selected() and piece is None:
-            return ActionType.MOVEMENT
         if piece is not None and piece.covered:
             return ActionType.REVEAL
+        if self.game_state.is_piece_selected() and piece is None:
+            return ActionType.MOVEMENT
         if self.game_state.is_piece_selected() and piece is not None:
+            if self.game_state.is_ally_selected(piece):
+                return ActionType.SELECTION
             return ActionType.EATING
-        if piece is not None and not piece.covered:
+        if piece is not None and self.game_state.is_ally_selected(piece):
             return ActionType.SELECTION
         return None
