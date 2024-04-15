@@ -1,3 +1,4 @@
+from enum import Enum, auto
 import random
 from typing import Tuple
 from src.board import Board
@@ -7,10 +8,16 @@ from src.piece_action_manager import PieceActionManager
 from src.player import Player, PlayerColor
 
 
+class GameStatus(Enum):
+    ONGOING = auto()
+    RED_WIN = auto()
+    BLACK_WIN = auto()
+    DRAW = auto()
+
+
 class GameState:
     def __init__(self) -> None:
-        self.pause = False
-        self.end_game = False
+        self.game_status = GameStatus.ONGOING
         self.board = Board()
         self.piece_action_manager = PieceActionManager(self.board)
         self.idle_steps = 0
@@ -18,6 +25,8 @@ class GameState:
         self.current_player_index = random.choice([0, 1])
         self.is_color_assign = False
         self.selected_piece: Tuple[int, int] = (-1, -1)
+        self.rest_piece_of_red_aligment_player = 16
+        self.rest_piece_of_black_aligment_player = 16
 
     def get_piece_by_coordinate(self, row: int, col: int) -> Piece | None:
         return self.board.get_piece_by_coordinate(row, col)
@@ -34,9 +43,7 @@ class GameState:
         return self.players[self.current_player_index]
 
     def reset_game(self) -> None:
-        # print("Reset Game")
-        self.pause = False
-        self.end_game = False
+        self.game_status = GameStatus.ONGOING
         self.board.initailization()
         self.reset_idle_steps()
         self.current_player_index = random.choice([0, 1])
@@ -79,3 +86,31 @@ class GameState:
 
     def update_actions_set(self) -> None:
         self.piece_action_manager.update_action_set()
+
+    def rest_piece_of_aligment_decrease(self) -> None:
+        match (self.get_current_player().color):
+            case PlayerColor.RED:
+                self.rest_piece_of_black_aligment_player -= 1
+            case PlayerColor.BLACK:
+                self.rest_piece_of_red_aligment_player -= 1
+
+    def update_game_status(self) -> None:
+        if self.idle_steps >= 17:
+            self.game_status = GameStatus.DRAW
+            return
+        if (
+            self.rest_piece_of_red_aligment_player <= 0
+            or not self.piece_action_manager.player_has_any_valid_action(
+                PlayerColor.RED
+            )
+        ):
+            self.game_status = GameStatus.BLACK_WIN
+        elif (
+            self.rest_piece_of_black_aligment_player <= 0
+            or not self.piece_action_manager.player_has_any_valid_action(
+                PlayerColor.BLACK
+            )
+        ):
+            self.game_status = GameStatus.RED_WIN
+        else:
+            self.game_status = GameStatus.ONGOING

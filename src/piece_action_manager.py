@@ -151,12 +151,7 @@ class PieceActionManager:
         )
         pieces: List[Optional[Piece]] = self.board.get_board_of_pieces()
         match (piece_action.piece_action_type):
-            case PieceActionType.EAT:
-                pieces[next_position], pieces[current_position] = (
-                    pieces[current_position],
-                    None,
-                )
-            case PieceActionType.MOVE:
+            case PieceActionType.EAT | PieceActionType.MOVE:
                 pieces[next_position], pieces[current_position] = (
                     pieces[current_position],
                     None,
@@ -166,4 +161,14 @@ class PieceActionManager:
                 if piece is not None:
                     piece.reveal()
             case _:
+                # raise Exception("Invalid Action ", piece_action.piece_action_type)
                 print("Invalid Action ", piece_action.piece_action_type)
+
+    def player_has_any_valid_action(self, player_color: PlayerColor) -> bool:
+        if len(self.neutral_action) > 0:
+            return True
+        match (player_color):
+            case PlayerColor.RED:
+                return len(self.red_alignment_action) > 0
+            case PlayerColor.BLACK:
+                return len(self.black_alignment_action) > 0

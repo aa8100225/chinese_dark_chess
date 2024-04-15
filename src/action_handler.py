@@ -44,10 +44,12 @@ class ActionHandler:
         if not self.game_state.is_valid_action(piece_action):
             return
         self.game_state.implement_action(piece_action)
+        self.game_state.rest_piece_of_aligment_decrease()
         self.game_state.update_actions_set()
         self.game_state.player_toggler()
         self.game_state.de_selected()
         self.game_state.reset_idle_steps()
+        self.game_state.update_game_status()
 
     def action_move(self, next_position: Tuple[int, int]) -> None:
         piece_action = PieceAction(
@@ -60,6 +62,7 @@ class ActionHandler:
         self.game_state.player_toggler()
         self.game_state.de_selected()
         self.game_state.idle_steps_increment()
+        self.game_state.update_game_status()
 
     def action_reveal(self, position: Tuple[int, int], piece: Piece) -> None:
         piece_action = PieceAction(position, PieceActionType.REVEAL, position)
@@ -76,6 +79,7 @@ class ActionHandler:
         self.game_state.de_selected()
         self.game_state.reset_idle_steps()
         self.game_state.update_actions_set()
+        self.game_state.update_game_status()
 
     def action_selection(self, position: Tuple[int, int]) -> None:
         self.game_state.piece_selected(position)

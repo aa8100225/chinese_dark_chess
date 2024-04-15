@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 import pygame  # type: ignore
 from src.assets_manager import AssetManager, ImageKey
-from src.game_state import GameState
+from src.game_state import GameState, GameStatus
 from src.player import PlayerColor
 from src.settings import WINDOW_HEIGHT, WINDOW_WIDTH
 
@@ -23,6 +23,7 @@ class GameRenderer:
         self.draw_reset_button()
         self.draw_board()
         self.draw_pieces()
+        self.draw_game_status()
         pygame.display.flip()
 
     def draw_board(self) -> None:
@@ -233,3 +234,22 @@ class GameRenderer:
             return row, col
 
         return None
+
+    def draw_game_status(self) -> None:
+        if self.game_state.game_status == GameStatus.ONGOING:
+            return
+        status_text = "Game Over: "
+        if self.game_state.game_status == GameStatus.RED_WIN:
+            status_text += "Red Wins!"
+        elif self.game_state.game_status == GameStatus.BLACK_WIN:
+            status_text += "Black Wins !"
+        else:
+            status_text += "Draw."
+
+        text_x = WINDOW_WIDTH // 2
+        text_y = 90
+
+        font = pygame.font.Font(None, 36)
+        text_surface = font.render(status_text, True, (128, 0, 128))
+        text_rect = text_surface.get_rect(center=(text_x, text_y))
+        self.screen.blit(text_surface, text_rect)

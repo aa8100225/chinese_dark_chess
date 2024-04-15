@@ -5,7 +5,7 @@ from src.action_detector import ActionDetector
 from src.action_handler import ActionHandler
 from src.assets_manager import AssetManager, ImageKey
 from src.game_renderer import GameRenderer
-from src.game_state import GameState
+from src.game_state import GameState, GameStatus
 from src.logger import setup_error_logger
 from src.settings import (
     CAPTION,
@@ -43,6 +43,8 @@ class Game:
                     if self.game_renderer.is_reset_button_pressed(mouse_pos):
                         self.game_state.reset_game()
                     else:
+                        if self.game_state.game_status != GameStatus.ONGOING:
+                            continue
                         clicked_square = self.game_renderer.get_clicked_square(
                             mouse_pos
                         )
