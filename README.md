@@ -2,7 +2,7 @@
 This is a Chinese Dark Chess game implemented in Python pygame, following normal Taiwanese rules of the game. Detailed rules can be found on [Wikipedia](https://en.wikipedia.org/wiki/Banqi).
 
 <!-- ![demo](./assets/demo.gif) -->
-<img src="./assets/demo.gif" alt="demo" width="70%" height="70%"/>
+<img src="./assets/demo.gif" alt="demo" width="65%" height="65%"/>
 
 - **Features**
   - Single Player Game: Supports one-on-one single player mode.
@@ -16,9 +16,9 @@ This is a Chinese Dark Chess game implemented in Python pygame, following normal
   - First, clone the repository, then install dependencies and run the game:
   ```bash
   git clone <Repository URL>
-cd chinese-dark-chess
-pipenv install
-pipenv run python main.py
+  cd chinese-dark-chess
+  pipenv install
+  pipenv run python main.py
   ```
 
 
