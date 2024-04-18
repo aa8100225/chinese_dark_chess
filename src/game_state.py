@@ -1,11 +1,12 @@
+import copy
 from enum import Enum, auto
 import random
-from typing import Tuple
-from src.board import Board
-from src.piece import Piece, PieceColor
-from src.piece_action import PieceAction
-from src.piece_action_manager import PieceActionManager
-from src.player import Player, PlayerColor
+from typing import List, Tuple
+from src.models.board import Board
+from src.models.piece import Piece, PieceColor
+from src.models.piece_action import PieceAction, PieceActionType
+from src.handlers.piece_action_manager import PieceActionManager
+from src.models.player import Player, PlayerColor
 
 
 class GameStatus(Enum):
@@ -50,6 +51,8 @@ class GameState:
         self.is_color_assign = False
         self.selected_piece = (-1, -1)
         self.piece_action_manager = PieceActionManager(self.board)
+        self.rest_piece_of_black_aligment_player = 16
+        self.rest_piece_of_red_aligment_player = 16
 
     def is_piece_selected(self) -> bool:
         return (-1, -1) != self.selected_piece
@@ -84,6 +87,39 @@ class GameState:
     def implement_action(self, piece_action: PieceAction) -> None:
         self.piece_action_manager.implement_action(piece_action)
 
+    def next_state(self, piece_action: PieceAction) -> "GameState":
+        """AI"""
+        self.implement_action(piece_action)
+        piece = self.board.get_piece_by_coordinate(
+            piece_action.current_position[0], piece_action.current_position[1]
+        )
+        if piece_action.piece_action_type == PieceActionType.EAT:
+            self.rest_piece_of_aligment_decrease()
+        if (
+            piece_action.piece_action_type == PieceActionType.REVEAL
+            and piece is not None
+        ):
+            player_color = (
+                PlayerColor.RED
+                if piece.piece_color == PieceColor.RED
+                else PlayerColor.BLACK
+            )
+            self.color_assign(player_color)
+
+        self.update_actions_set()
+        self.player_toggler()
+        self.de_selected()
+        if piece_action.piece_action_type in (
+            PieceActionType.EAT,
+            PieceActionType.REVEAL,
+        ):
+            self.reset_idle_steps()
+        else:
+            self.idle_steps_increment()
+
+        self.update_game_status()
+        return self
+
     def update_actions_set(self) -> None:
         self.piece_action_manager.update_action_set()
 
@@ -114,3 +150,50 @@ class GameState:
             self.game_status = GameStatus.RED_WIN
         else:
             self.game_status = GameStatus.ONGOING
+
+    def get_board_features(self) -> List[int]:
+        return self.board.get_board_features(self.get_current_player().color)
+
+    def get_legal_actions(self) -> List[int]:
+        return self.piece_action_manager.get_legal_actions(
+            self.get_current_player().color
+        )
+
+    def generate_action_by_index(self, index: int) -> PieceAction:
+        return self.piece_action_manager.decode_action_index(index)
+
+    def get_value_and_terminated(self) -> Tuple[int, bool]:
+        match (self.game_status):
+            case GameStatus.ONGOING:
+                return (0, False)
+            case GameStatus.DRAW:
+                return (0, True)
+        return (1, True)
+
+    def __deepcopy__(self, memo):
+        # 使用__new__避免調用__init__方法
+        new_game_state = type(self).__new__(self.__class__)
+        memo[id(self)] = new_game_state
+
+        new_game_state.board = copy.deepcopy(self.board, memo)
+        new_game_state.piece_action_manager = PieceActionManager(new_game_state.board)
+
+        new_game_state.game_status = self.game_status
+        new_game_state.idle_steps = self.idle_steps
+        new_game_state.current_player_index = self.current_player_index
+        new_game_state.is_color_assign = self.is_color_assign
+        new_game_state.selected_piece = self.selected_piece
+        new_game_state.rest_piece_of_red_aligment_player = (
+            self.rest_piece_of_red_aligment_player
+        )
+        new_game_state.rest_piece_of_black_aligment_player = (
+            self.rest_piece_of_black_aligment_player
+        )
+
+        new_game_state.players = [Player("Player 1"), Player("Player 2")]
+        if self.players[0].color is not None:
+            new_game_state.players[0].assign_color(self.players[0].color)
+        if self.players[1].color is not None:
+            new_game_state.players[1].assign_color(self.players[1].color)
+
+        return new_game_state

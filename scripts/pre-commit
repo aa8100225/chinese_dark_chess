@@ -1,0 +1,21 @@
+#!/bin/sh
+# Navigate to the project directory if not already there
+cd "$(dirname "$0")/.."
+# Activate the pipenv environment
+PIPENV_PATH=$(pipenv --venv)
+export PATH="$PIPENV_PATH/bin:$PATH"
+# Run pytest
+if !pipenv run pytest; then
+  echo "Tests failed, commit denied."
+  exit 1
+fi
+
+echo "Running unittests..."
+pipenv run python -m unittest discover
+
+if [ $? -ne 0 ]; then
+  echo "Tests failed, commit denied."
+  exit 1
+fi
+
+echo "Tests passed. Proceeding with commit."

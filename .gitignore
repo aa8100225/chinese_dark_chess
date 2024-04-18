@@ -1,4 +1,6 @@
 /__pycache__/ 
 /.venv/ 
-/Pipfile.lock 
+/Pipfile.lock
 /.vscode/
+/.pytest_cache/
+.mypy,cache

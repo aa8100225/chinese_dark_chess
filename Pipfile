@@ -11,6 +11,8 @@ black = "*"
 pygame = "*"
 pytest = "*"
 cairosvg = "*"
+torch = "*"
+torchvision = "*"
 
 [dev-packages]
 

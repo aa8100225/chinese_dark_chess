@@ -1,7 +1,0 @@
-<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-    <!-- White background with slight 3D effect -->
-    <circle cx="50" cy="50" r="40" fill="green" />
-    <circle cx="50" cy="50" r="35" fill="white" />
-    <text x="50" y="60" font-family="PingFang SC, Microsoft YaHei, SimSun" font-size="30" font-weight="bold"
-        fill="black" text-anchor="middle">將</text>
-</svg>

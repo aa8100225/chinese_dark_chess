@@ -5,7 +5,9 @@
     "--disable=C0111",  /* missing function or method docstring */
     "--disable=C0401"
    ],
-   "editor.formatOnSave": true,
+   "[markdown]": {
+      "editor.formatOnSave": false
+   },
    "[python]": {
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.wordBasedSuggestions": "off",
