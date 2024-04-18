@@ -1,24 +1,23 @@
 # <type>: <short summary>
 
-# More detailed explanatory text, if necessary. Wrap it to about 72
-# characters or so. The blank line separating the summary from the body
-# is critical; various tools like `log`, `shortlog` and `rebase` can get
-# confused if you run the two together.
+# A longer commit body MAY be provided after the short description, providing additional contextual information about the code changes. The body MUST begin one blank line after the description.
 
-# Explain the problem that this commit is solving. Focus on why you
-# are making this change as opposed to how (the code explains that).
-# Are there side effects or other unintuitive consequences of this
-# change? Here's the place to explain them.
+# A commit footer MAY be provided one blank line after the body. The footer SHOULD contain additional metadata about the commit, such as related issue IDs and links to relevant documentation.
 
-# Further paragraphs come after blank lines.
+# Example Types:
+# feat (feature)
+# fix (bug fix)
+# docs (documentation)
+# style (formatting, missing semi colons, etc; no code change)
+# refactor (refactoring production code)
+# test (adding missing tests, refactoring tests; no production code change)
+# chore (updating grunt tasks etc; no production code change)
 
-# - Bullet points are okay, too
+# Example:
+# feat(login): add captcha to login flow
 #
-# - Typically a hyphen or asterisk is used for the bullet, followed by a
-#   single space, with blank lines in between, but conventions vary here
-
-# If you use an issue tracker, put references to them at the bottom,
-# like this:
+# Body of explanatory text, if necessary. Wrap it to about 72 characters. 
+# More detailed explanatory text, if necessary.
 #
 # Resolves: #123
 # See also: #456, #789

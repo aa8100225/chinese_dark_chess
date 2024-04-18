@@ -1,30 +1,15 @@
-import sys
-
-# pylint: disable=no-member
-import pygame
-from src.game import configure_game
-from src.events import handle_events
+import argparse
+from src.game import Game
+from src.logger import setup_error_logger
 
 
-def main() -> None:
-    """
-    Description
-    """
-
-    logger, screen = configure_game()
-
-    try:
-        running = True
-        while running:
-            running = handle_events()
-            screen.fill((0, 0, 0))
-            pygame.display.flip()
-    except Exception as e:
-        logger.error("An error occurred: %s", str(e))
-    finally:
-        pygame.quit()
-        sys.exit()
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run the Chinese Dark Chess game.")
+    parser.add_argument("--ai", action="store_true", help="Enable AI opponent")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    main()
+    args = parse_args()
+    logger = setup_error_logger(__name__)
+    Game("./src/ai/model.pt", args.ai, logger).run()
