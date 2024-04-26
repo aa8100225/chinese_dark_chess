@@ -93,8 +93,7 @@ class ActionHandler:
         if self.agent is None:
             return
 
-        action = self.agent.predict(self.game_state)
-        piece_action = self.game_state.generate_action_by_index(action)
+        piece_action = self.agent.predict(self.game_state)
         if not self.game_state.is_valid_action(piece_action):
             print(
                 "!!!!!!!!!!!!!!!!!!!!!!!!! Invalid Action Occurred !!!!!!!!!!!!!!!!!!!!!!!!!"

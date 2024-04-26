@@ -1,37 +1,38 @@
-import copy
 import math
 from typing import Any, Dict, List, Optional
 import numpy as np
 
-from src.game_state import GameState
+from src.ai.ai_game_state_transition_helper import AIGameStateTransitionHelper
 
 
 class Node:
     def __init__(
         self,
+        ai_game_state_transition_helper: AIGameStateTransitionHelper,
         args: Dict[str, Any],
-        state: GameState,
+        state: np.ndarray,
         parent: Optional["Node"] = None,
         action_taken: Optional[int] = None,
-        prior: int = 0,
-        visit_count: int = 0,
-    ) -> None:
+        prior=0,
+        visit_count=0,
+    ):
+        self.ai_game_state_transition_helper = ai_game_state_transition_helper
         self.args = args
         self.state = state
         self.parent = parent
         self.action_taken = action_taken
         self.prior = prior
 
-        self.children: List["Node"] = []
+        self.children: List[Optional["Node"]] = []
 
         self.visit_count = visit_count
         self.value_sum = 0
 
-    def is_fully_expanded(self) -> bool:
+    def is_fully_expanded(self):
         return len(self.children) > 0
 
-    def select(self) -> "Node":
-        best_child = self
+    def select(self):
+        best_child = None
         best_ucb = -np.inf
 
         for child in self.children:
@@ -42,9 +43,9 @@ class Node:
 
         return best_child
 
-    def get_ucb(self, child: "Node") -> float:
+    def get_ucb(self, child):
         if child.visit_count == 0:
-            q_value: float = 0
+            q_value = 0
         else:
             q_value = 1 - ((child.value_sum / child.visit_count) + 1) / 2
         return (
@@ -54,20 +55,42 @@ class Node:
             * child.prior
         )
 
-    def expand(self, policy) -> None:
+    def expand(self, policy):
+        child = None
         for action, prob in enumerate(policy):
             if prob > 0:
-                child_state = copy.deepcopy(self.state)
-                piece_action = child_state.generate_action_by_index(action)
-                child_state = child_state.next_state(piece_action)
+                child_state = self.state.copy()
+                child_state = self.ai_game_state_transition_helper.get_next_state(
+                    child_state, action
+                )
+                child_state = self.ai_game_state_transition_helper.change_perspective(
+                    child_state
+                )
+                # if action > 135:
+                #     prob += (
+                #         0.1
+                #         * self.ai_game_state_transition_helper.count_covered_pieces_number(
+                #             child_state
+                #         )
+                #         / 32
+                #     )
 
-                child = Node(self.args, child_state, self, action, prob)
+                child = Node(
+                    self.ai_game_state_transition_helper,
+                    self.args,
+                    child_state,
+                    self,
+                    action,
+                    prob,
+                )
                 self.children.append(child)
+
+        return child
 
     def backpropagate(self, value):
         self.value_sum += value
         self.visit_count += 1
 
-        value = -value
+        value = self.ai_game_state_transition_helper.get_opponent_value(value)
         if self.parent is not None:
             self.parent.backpropagate(value)
