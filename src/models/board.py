@@ -45,36 +45,3 @@ class Board:
         This includes both occupied and unoccupied positions on the chessboard.
         """
         return self.pieces
-
-    def get_board_features(self, player_color: Optional[PlayerColor]) -> List[int]:
-        """
-        Extracts features of the board as a list of integers, reflecting the state of each piece
-        from the perspective of the specified player color.
-        Returns 0 for empty positions, 100 for covered pieces,
-        and piece value multiplied by 1 if it's the same alliance (friendly piece)
-        or -1 if it's from the opposing side,
-        based on whether the player's color matches the piece's color.
-        """
-        features: List[int] = []
-        for piece in self.pieces:
-            if piece is None:
-                features.append(0)
-            elif piece.covered:
-                features.append(100)
-            else:
-                if PlayerColor.RED == player_color:
-                    features.append(
-                        (piece.piece_type.value + 1)
-                        * (1 if PieceColor.RED == piece.piece_color else -1)
-                    )
-                else:
-                    features.append(
-                        (piece.piece_type.value + 1)
-                        * (1 if PieceColor.BLACK == piece.piece_color else -1)
-                    )
-        return features
-
-    def __deepcopy__(self, memo):
-        new_board = Board.__new__(Board)
-        new_board.pieces = copy.deepcopy(self.pieces, memo)
-        return new_board

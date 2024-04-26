@@ -28,7 +28,7 @@ BLACK_SOILDER_PIECE_IMAGE_PATH = "assets/images/chess_black_soilder.png"
 
 AI_ARGS = {
     "C": 2,
-    "num_searches": 60,
-    "dirichlet_epsilon": 0.0,
+    "num_searches": 600,
+    "dirichlet_epsilon": 0.1,
     "dirichlet_alpha": 0.3,
 }
